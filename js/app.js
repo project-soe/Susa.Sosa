@@ -188,7 +188,13 @@ function showGalleryMedia(index) {
   const main = $("#galleryMain");
   if (!main) return;
   main.querySelector("img, video, iframe")?.remove();
-  main.insertAdjacentHTML("afterbegin", mediaHTML(currentProject.media[currentMediaIndex]));
+  const media = currentProject.media[currentMediaIndex];
+  main.insertAdjacentHTML("afterbegin", mediaHTML(media));
+  const caption = $("#galleryCaption");
+  if (caption) {
+    caption.textContent = media.label ?? "";
+    caption.hidden = !media.label?.trim();
+  }
   $(".thumb", dialog).forEach((thumb, i) => {
     thumb.setAttribute("aria-current", String(i === currentMediaIndex));
   });
@@ -208,6 +214,7 @@ function renderDialog(project) {
           <button class="gallery__nav gallery__nav--next" type="button" data-gallery-next aria-label="Foto berikutnya">&#8250;</button>
           <span class="gallery__counter" id="galleryCounter">1 / ${project.media.length}</span>` : ""}
       </div>
+      <p class="gallery__caption" id="galleryCaption" ${project.media[0].label?.trim() ? "" : "hidden"}>${esc(project.media[0].label ?? "")}</p>
       ${project.media.length > 1 ? `<div class="gallery__thumbs" id="galleryThumbs">${project.media.map(thumbHTML).join("")}</div>` : ""}`
     : `<div class="gallery__main"><div class="card__ph"><span class="logo-mark"></span></div></div>`}
     <p class="card__cat">${esc(categoryName(project))}</p>
