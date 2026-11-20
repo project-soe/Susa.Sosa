@@ -16,7 +16,7 @@ export async function render(target) {
   root = target;
   root.innerHTML = loadingHTML;
   const [projects, cats] = await Promise.all([
-    rest("projects?select=*,media(id,kind,url,sort)&order=created_at.desc"),
+    rest("projects?select=*,media(id,kind,url,sort,label)&order=created_at.desc"),
     rest("categories?select=*&order=sort"),
   ]);
   categories = cats;
@@ -169,6 +169,7 @@ function mediaItemHTML(m, i, all) {
   return `
     <div class="media__item" data-mid="${esc(m.id)}">
       <div class="media__thumb">${thumb}</div>
+      ${m.kind === "image" ? `<label class="media__label">Label foto<input class="field" type="text" data-media-label maxlength="80" value="${esc(m.label ?? "")}" placeholder="Contoh: Halaman Utama"></label>` : ""}
       <div class="media__tools">
         <button type="button" class="btn btn--ghost btn-icon btn--xs" data-m="up" aria-label="Naikkan" ${i === 0 ? "disabled" : ""}>&uarr;</button>
         <button type="button" class="btn btn--ghost btn-icon btn--xs" data-m="down" aria-label="Turunkan" ${i === (all?.length ?? 1) - 1 ? "disabled" : ""}>&darr;</button>
@@ -185,7 +186,7 @@ function redrawMedia() {
 
 function wireMedia(form) {
   const addMedia = async (kind, url) => {
-    const row = await insert("media", { project_id: editing.id, kind, url, sort: editing.media.length });
+    const row = await insert("media", { project_id: editing.id, kind, url, sort: editing.media.length, label: "" });
     editing.media.push(row);
   };
 
@@ -210,6 +211,23 @@ function wireMedia(form) {
       redrawMedia();
       toast("Video ditambahkan");
     } catch (error) { toast(error.message, "error"); }
+  });
+
+  $("#mediaGrid").addEventListener("change", async (event) => {
+    const input = event.target.closest("[data-media-label]");
+    if (!input) return;
+    const item = input.closest("[data-mid]");
+    const media = editing.media.find((m) => m.id === item?.dataset.mid);
+    if (!media) return;
+    const label = input.value.trim();
+    try {
+      await update("media", media.id, { label });
+      media.label = label;
+      toast("Label foto tersimpan");
+    } catch (error) {
+      input.value = media.label ?? "";
+      toast(error.message, "error");
+    }
   });
 
   $("#mediaGrid").addEventListener("click", async (event) => {
