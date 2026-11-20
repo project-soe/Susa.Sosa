@@ -34,20 +34,55 @@ const translations = {
   "Salin":"Copy","Tersalin":"Copied","Gagal, coba lagi":"Failed, try again",
   "Aktifkan JavaScript untuk melihat katalog.":"Enable JavaScript to view the catalog.",
   "Susa.Sosa, ke atas":"Susa.Sosa, back to top","Buka menu":"Open menu","Tutup menu":"Close menu",
-  "Filter kategori":"Filter categories","Media ":"Media "
+  "Filter kategori":"Filter categories","Media ":"Media ",
+  "Tanpa kategori":"Uncategorized","Video proyek":"Project video",
+  "Website dan aplikasi":"Websites and applications","siap pakai":"ready to use","tinggal jalan.":"ready to launch.",
+  "Semua hak dilindungi.":"All rights reserved.","Pilih kategori, klik proyek untuk melihat foto, video, dan detailnya.":"Choose a category, then select a project to view photos, videos, and details.",
+  "Foto dan video":"Photos and videos","Tampilkan di website":"Show on website",
+  "Kembali ke atas":"Back to top","Nama kamu":"Your name","Nama kamu (opsional)":"Your name (optional)",
+  "Konfirmasi via WhatsApp":"Confirm via WhatsApp",
+  "Setelah transfer, klik tombol di atas dan kirim bukti pembayaran lewat WhatsApp.":"After transferring, click the button above and send your payment receipt via WhatsApp.",
+  "Pembayaran manual sedang tidak aktif. Silakan hubungi lewat WhatsApp.":"Manual payment is currently unavailable. Please contact us via WhatsApp.",
+  "Metode pembayaran belum diatur.":"Payment methods have not been configured.",
+  "a.n. ":"Account name: ","Transfer ":"Transfer ",
+  "Data belum bisa dimuat. Periksa koneksi lalu muat ulang halaman.":"Unable to load data. Check your connection and reload the page.",
+  "Aktifkan JavaScript untuk melihat katalog.":"Enable JavaScript to view the catalog.",
+  "Semua hak dilindungi":"All rights reserved","Tanpa kategori":"Uncategorized"
 };
 const originalText = new WeakMap();
 const originalAttrs = new WeakMap();
 function translated(value) {
+  const source = String(value ?? "");
+  const leading = source.match(/^\\s*/)?.[0] ?? "";
+  const trailing = source.match(/\\s*$/)?.[0] ?? "";
+  const core = source.slice(leading.length, source.length - trailing.length || undefined);
+  if (!core) return source;
+  if (Object.prototype.hasOwnProperty.call(translations, core)) return leading + translations[core] + trailing;
+
+  let result = core;
+  const phrases = Object.entries(translations)
+    .filter(([id]) => /\\s/.test(id.trim()) && id.trim().length > 5)
+    .sort((a, b) => b[0].length - a[0].length);
+  for (const [id, en] of phrases) {
+    const phrase = id.trim().replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\function translated(value) {
   let result = value;
   for (const [id,en] of Object.entries(translations)) {
     if (result === id) return en;
   }
   return result;
+}");
+    result = result.replace(new RegExp(phrase, "gi"), en);
+  }
+  return leading + result + trailing;
 }
 function applyLanguage() {
   const lang = state.lang;
   document.documentElement.lang = lang;
+  document.title = lang === "en" ? "Susa.Sosa - Ready-to-use Websites and Applications" : "Susa.Sosa - Website dan Aplikasi Siap Pakai";
+  const description = $("meta[name='description']");
+  if (description) description.content = lang === "en"
+    ? "Susa.Sosa offers ready-made websites and applications. Explore the catalog, preview projects, and order via WhatsApp."
+    : "Susa.Sosa menjual proyek website dan aplikasi yang sudah jadi, dikerjakan full stack. Lihat katalog, preview, dan pesan lewat WhatsApp.";
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let node;
   while ((node = walker.nextNode())) {
@@ -191,13 +226,14 @@ function refreshLocalizedContent() {
   renderTestimonials();
   renderContact();
   if (currentProject && dialog.open) renderDialog(currentProject);
+  applyLanguage();
 }
 
 function renderContact() {
   const { settings } = state.data;
   if (settings.tagline || settings.tagline_en) $("#tagline").textContent = localized(settings, "tagline");
   $$("[data-wa]").forEach((a) => {
-    a.href = waLink("Halo Susa.Sosa, saya ingin bertanya tentang proyek.");
+    a.href = waLink(state.lang === "en" ? "Hello Susa.Sosa, I would like to ask about a project." : "Halo Susa.Sosa, saya ingin bertanya tentang proyek.");
     a.target = "_blank";
     a.rel = "noopener";
   });
@@ -330,10 +366,9 @@ async function confirmOrder(button) {
   const popup = window.open("", "_blank"); // dibuka sekarang agar tidak diblokir browser
   try {
     const { code } = await createManualOrder(currentProject, name);
-    const text =
-      `Halo Susa.Sosa, saya sudah transfer.\n` +
-      `Kode pesanan: ${code}\nProyek: ${currentProject.title}\nTotal: ${rupiah(currentProject.price)}` +
-      (name ? `\nNama: ${name}` : "");
+    const text = state.lang === "en"
+      ? `Hello Susa.Sosa, I have completed the transfer.\\nOrder code: ${code}\\nProject: ${localized(currentProject, "title")}\\nTotal: ${rupiah(currentProject.price)}${name ? `\\nName: ${name}` : ""}`
+      : `Halo Susa.Sosa, saya sudah transfer.\\nKode pesanan: ${code}\\nProyek: ${currentProject.title}\\nTotal: ${rupiah(currentProject.price)}${name ? `\\nNama: ${name}` : ""}`;
     const url = waLink(text);
     if (popup) popup.location.href = url; else location.href = url;
   } catch {
