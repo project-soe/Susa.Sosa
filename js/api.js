@@ -11,8 +11,9 @@ async function rest(path, options = {}) {
   const res = await fetch(`${CONFIG.supabaseUrl}/rest/v1/${path}`, {
     ...options,
     headers: {
+      // Publishable key dikirim melalui apikey. Jangan jadikan publishable key
+      // sebagai Bearer token: Authorization harus berisi JWT user yang valid.
       apikey: CONFIG.supabaseAnonKey,
-      Authorization: `Bearer ${CONFIG.supabaseAnonKey}`,
       "Content-Type": "application/json",
       ...options.headers,
     },
