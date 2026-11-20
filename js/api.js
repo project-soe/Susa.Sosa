@@ -18,7 +18,10 @@ async function rest(path, options = {}) {
       ...options.headers,
     },
   });
-  if (!res.ok) throw new Error(`Permintaan gagal (${res.status})`);
+  if (!res.ok) {
+    const detail = await res.json().catch(() => ({}));
+    throw new Error(detail.message || detail.error_description || `Permintaan gagal (${res.status})`);
+  }
   return res.status === 204 ? null : res.json();
 }
 
