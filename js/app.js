@@ -182,6 +182,17 @@ function renderTestimonials() {
     .join("");
 }
 
+function refreshLocalizedContent() {
+  if (!state.data) return;
+  renderFeatured();
+  renderChips();
+  renderCatalog();
+  renderServices();
+  renderTestimonials();
+  renderContact();
+  if (currentProject && dialog.open) renderDialog(currentProject);
+}
+
 function renderContact() {
   const { settings } = state.data;
   if (settings.tagline || settings.tagline_en) $("#tagline").textContent = localized(settings, "tagline");
@@ -417,6 +428,7 @@ function initLanguage() {
     state.lang = state.lang === "id" ? "en" : "id";
     localStorage.setItem("susa-language", state.lang);
     applyLanguage();
+    refreshLocalizedContent();
   });
   applyLanguage();
   const observer = new MutationObserver((records) => {
