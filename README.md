@@ -58,6 +58,20 @@ Publishable/anon key memang berada di browser dan bukan rahasia. Keamanan data b
 
 Bucket `media` dibuat public agar gambar proyek, QR, dan foto yang dipakai website dapat dimuat langsung. Unduhan dari bucket public dapat diakses siapa pun yang mengetahui URL, jadi unggah hanya aset yang memang boleh dipublikasikan. Operasi upload, ubah, dan hapus dibatasi untuk admin.
 
+### Mengatasi error RLS saat menambah kategori/data
+
+Jika dashboard menampilkan pesan `new row violates row-level security policy`, login berhasil tetapi token yang dipakai belum dikenali sebagai admin oleh kebijakan RLS. Di **Supabase > SQL Editor**, jalankan perintah berikut dengan email akun admin yang benar:
+
+```sql
+update auth.users
+set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
+where email = 'EMAIL_ADMIN_KAMU';
+```
+
+Pastikan perintah mengubah tepat satu akun. Setelah itu **logout dari dashboard, lalu login kembali** agar access token baru memuat role tersebut. Jangan mengatasi error ini dengan membuka izin INSERT untuk semua pengguna atau menonaktifkan RLS.
+
+Jika tetap gagal, pastikan skema dan policy terbaru sudah dijalankan dari `supabase/schema.sql`, lalu periksa bahwa akun yang dipakai login memang akun yang diberi role admin.
+
 ## Dashboard admin
 
 Buka `/admin/` dan masuk dengan akun admin Supabase yang sudah diberi `app_metadata.role = admin`.
