@@ -52,7 +52,7 @@ export async function loadData() {
   // memastikan foto yang sudah diunggah ikut masuk ke kartu proyek.
   const projectIds = projects.map((project) => project.id).filter(Boolean);
   const media = projectIds.length
-    ? await rest(`media?select=id,project_id,kind,url,sort&project_id=in.(${projectIds.join(",")})&order=sort.asc`)
+    ? await rest(`media?select=id,project_id,kind,url,sort,label&project_id=in.(${projectIds.join(",")})&order=sort.asc`)
     : [];
   const mediaByProject = new Map();
   for (const item of media) {
