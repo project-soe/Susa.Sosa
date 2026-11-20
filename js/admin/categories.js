@@ -12,7 +12,8 @@ export async function render(root) {
     <div class="toolbar"><div><h2>Kategori</h2><p>Dipakai sebagai filter di katalog.</p></div></div>
     <form class="inline-form" id="catForm">
       <label class="sr-only" for="catName">Nama kategori</label>
-      <input class="field" id="catName" placeholder="Nama kategori baru" required maxlength="40">
+      <input class="field" id="catName" placeholder="Nama kategori baru (Indonesia)" required maxlength="40">
+      <input class="field" id="catNameEn" placeholder="Category name (English)" maxlength="40">
       <button class="btn btn--accent" type="submit">Tambah</button>
     </form>
     ${categories.length ? `<ul class="list">${categories.map(rowHTML).join("")}</ul>` : emptyHTML("Belum ada kategori.")}`;
@@ -21,9 +22,10 @@ export async function render(root) {
     event.preventDefault();
     const input = root.querySelector("#catName");
     const name = input.value.trim();
+    const name_en = root.querySelector("#catNameEn").value.trim();
     if (!name) return;
     try {
-      await insert("categories", { name, slug: slugify(name) || `kategori-${Date.now()}`, sort: categories.length + 1 });
+      await insert("categories", { name, name_en, slug: slugify(name) || `kategori-${Date.now()}`, sort: categories.length + 1 });
       toast("Kategori ditambahkan");
       render(root);
     } catch (error) { toast(error.message, "error"); }
@@ -37,7 +39,8 @@ export async function render(root) {
     const value = field === "sort" ? Number(input.value) || 0 : input.value.trim();
     if (field === "name" && !value) return render(root);
     try {
-      await update("categories", id, field === "name" ? { name: value, slug: slugify(value) } : { sort: value });
+      const patch = field === "name" ? { name: value, slug: slugify(value) } : field === "name_en" ? { name_en: value } : { sort: value };
+      await update("categories", id, patch);
       toast("Tersimpan");
     } catch (error) { toast(error.message, "error"); render(root); }
   };
@@ -58,7 +61,7 @@ export async function render(root) {
 
 const rowHTML = (c) => `
   <li class="item" data-id="${esc(c.id)}">
-    <div class="item__main"><input class="field" data-field="name" value="${esc(c.name)}" maxlength="40" aria-label="Nama kategori"></div>
+    <div class="item__main"><input class="field" data-field="name" value="${esc(c.name)}" maxlength="40" aria-label="Nama kategori (Indonesia)"><input class="field" data-field="name_en" value="${esc(c.name_en ?? "")}" maxlength="40" aria-label="Category name (English)"></div>
     <label class="num" title="Urutan"><span class="sr-only">Urutan</span>
       <input type="number" min="0" data-field="sort" value="${c.sort}" aria-label="Urutan"></label>
     <div class="item__actions"><button class="btn btn--ghost btn--sm btn--danger-text" data-act="del">Hapus</button></div>
