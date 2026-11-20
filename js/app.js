@@ -361,8 +361,8 @@ async function confirmOrder(button) {
   try {
     const { code } = await createManualOrder(currentProject, name);
     const text = state.lang === "en"
-      ? \`Hello Susa.Sosa, I have completed the transfer.\nOrder code: \${code}\nProject: \${localized(currentProject, "title")}\nTotal: \${rupiah(currentProject.price)}\${name ? \`\nName: \${name}\` : ""}\`
-      : \`Halo Susa.Sosa, saya sudah transfer.\nKode pesanan: \${code}\nProyek: \${currentProject.title}\nTotal: \${rupiah(currentProject.price)}\${name ? \`\nNama: \${name}\` : ""}\`;
+      ? "Hello Susa.Sosa, I have completed the transfer.\nOrder code: " + code + "\nProject: " + localized(currentProject, "title") + "\nTotal: " + rupiah(currentProject.price) + (name ? "\nName: " + name : "")
+      : "Halo Susa.Sosa, saya sudah transfer.\nKode pesanan: " + code + "\nProyek: " + currentProject.title + "\nTotal: " + rupiah(currentProject.price) + (name ? "\nNama: " + name : "");
     const url = waLink(text);
     if (popup) popup.location.href = url; else location.href = url;
   } catch {
