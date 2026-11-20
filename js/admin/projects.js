@@ -16,7 +16,7 @@ export async function render(target) {
   root = target;
   root.innerHTML = loadingHTML;
   const [projects, cats] = await Promise.all([
-    rest("projects?select=*,media(id,kind,url,sort,label)&order=created_at.desc"),
+    rest("projects?select=*,media(id,kind,url,sort,label,label_en)&order=created_at.desc"),
     rest("categories?select=*&order=sort"),
   ]);
   categories = cats;
