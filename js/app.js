@@ -98,8 +98,9 @@ const waLink = (text = "") => {
 const youtubeId = (url) => (String(url).match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/) || [])[1];
 
 const categoryName = (project) =>
-  state.data.categories.find((c) => c.id === project.category_id)?.name ?? "";
+  localized(state.data.categories.find((c) => c.id === project.category_id), "name");
 
+const localized = (item, key) => state.lang === "en" && item?.[`${key}_en`]?.trim() ? item[`${key}_en`] : (item?.[key] ?? "");
 const firstImage = (project) => project.media.find((m) => m.kind === "image");
 
 /* ---------- Render: kartu proyek ---------- */
@@ -107,7 +108,7 @@ const firstImage = (project) => project.media.find((m) => m.kind === "image");
 function cardHTML(project, index) {
   const image = firstImage(project);
   const media = image
-    ? `<img src="${esc(safeUrl(image.url))}" alt="${esc(project.title)}" loading="lazy" decoding="async">`
+    ? `<img src="${esc(safeUrl(image.url))}" alt="${esc(localized(project, "title"))}" loading="lazy" decoding="async">`
     : `<div class="card__ph"><span class="logo-mark"></span></div>`;
   return `
     <a class="card card--enter" style="--i:${index}" href="#proyek/${esc(project.slug)}" data-slug="${esc(project.slug)}">
@@ -115,7 +116,7 @@ function cardHTML(project, index) {
       <div class="card__body">
         <p class="card__cat">${esc(categoryName(project))}</p>
         <h3 class="card__title">${esc(project.title)}</h3>
-        <p>${esc(project.summary)}</p>
+        <p>${esc(localized(project, "summary"))}</p>
         <span class="card__price">${rupiah(project.price)}</span>
       </div>
     </a>`;
@@ -133,7 +134,7 @@ function renderFeatured() {
 function renderChips() {
   const chips = [{ id: "all", name: "Semua" }, ...state.data.categories];
   $("#chips").innerHTML = chips
-    .map((c) => `<button class="chip" data-cat="${esc(c.id)}" aria-pressed="${c.id === state.filter}">${esc(c.name)}</button>`)
+    .map((c) => `<button class="chip" data-cat="${esc(c.id)}" aria-pressed="${c.id === state.filter}">${esc(localized(c, "name"))}</button>`)
     .join("");
 }
 
@@ -152,8 +153,8 @@ function renderServices() {
     .map(
       (s, i) => `
       <article class="plan reveal" style="--i:${i}">
-        <h3>${esc(s.name)}</h3>
-        <p>${esc(s.desc)}</p>
+        <h3>${esc(localized(s, "name"))}</h3>
+        <p>${esc(localized(s, "desc"))}</p>
         <div class="plan__price"><small>mulai dari</small><br>${rupiah(s.price)}</div>
         <a class="btn btn--ghost" target="_blank" rel="noopener"
            href="${esc(waLink(`Halo Susa.Sosa, saya tertarik dengan layanan: ${s.name}`))}">Tanya layanan ini</a>
@@ -174,8 +175,8 @@ function renderTestimonials() {
         : esc(t.author.charAt(0).toUpperCase());
       return `
       <figure class="quote reveal" style="--i:${i}">
-        <blockquote>&ldquo;${esc(t.quote)}&rdquo;</blockquote>
-        <figcaption><span class="avatar">${avatar}</span><span><strong>${esc(t.author)}</strong>${esc(t.role)}</span></figcaption>
+        <blockquote>&ldquo;${esc(localized(t, "quote"))}&rdquo;</blockquote>
+        <figcaption><span class="avatar">${avatar}</span><span><strong>${esc(t.author)}</strong>${esc(localized(t, "role"))}</span></figcaption>
       </figure>`;
     })
     .join("");
@@ -183,7 +184,7 @@ function renderTestimonials() {
 
 function renderContact() {
   const { settings } = state.data;
-  if (settings.tagline) $("#tagline").textContent = settings.tagline;
+  if (settings.tagline || settings.tagline_en) $("#tagline").textContent = localized(settings, "tagline");
   $$("[data-wa]").forEach((a) => {
     a.href = waLink("Halo Susa.Sosa, saya ingin bertanya tentang proyek.");
     a.target = "_blank";
@@ -260,8 +261,8 @@ function showGalleryMedia(index) {
   main.insertAdjacentHTML("afterbegin", mediaHTML(media));
   const caption = $("#galleryCaption");
   if (caption) {
-    caption.textContent = media.label ?? "";
-    caption.hidden = !media.label?.trim();
+    caption.textContent = localized(media, "label");
+    caption.hidden = !localized(media, "label").trim();
   }
   $(".thumb", dialog).forEach((thumb, i) => {
     thumb.setAttribute("aria-current", String(i === currentMediaIndex));
@@ -282,12 +283,12 @@ function renderDialog(project) {
           <button class="gallery__nav gallery__nav--next" type="button" data-gallery-next aria-label="Foto berikutnya">&#8250;</button>
           <span class="gallery__counter" id="galleryCounter">1 / ${project.media.length}</span>` : ""}
       </div>
-      <p class="gallery__caption" id="galleryCaption" ${project.media[0].label?.trim() ? "" : "hidden"}>${esc(project.media[0].label ?? "")}</p>
+      <p class="gallery__caption" id="galleryCaption" ${localized(project.media[0], "label").trim() ? "" : "hidden"}>${esc(localized(project.media[0], "label"))}</p>
       ${project.media.length > 1 ? `<div class="gallery__thumbs" id="galleryThumbs">${project.media.map(thumbHTML).join("")}</div>` : ""}`
     : `<div class="gallery__main"><div class="card__ph"><span class="logo-mark"></span></div></div>`}
     <p class="card__cat">${esc(categoryName(project))}</p>
     <h2 id="dlgTitle">${esc(project.title)}</h2>
-    <p class="dlg__desc">${esc(project.description || project.summary)}</p>
+    <p class="dlg__desc">${esc(localized(project, "description") || localized(project, "summary"))}</p>
     <div class="dlg__price">${rupiah(project.price)}</div>
     <div class="row">
       <button class="btn btn--accent" data-order>Pesan Sekarang</button>
