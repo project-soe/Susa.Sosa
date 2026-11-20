@@ -111,6 +111,7 @@ function openEditor(project) {
     onSubmit: async (data) => {
       const row = {
         title: data.get("title").trim(),
+        title_en: data.get("title_en").trim(),
         category_id: data.get("category_id") || null,
         summary: data.get("summary").trim(),
         summary_en: data.get("summary_en").trim(),
