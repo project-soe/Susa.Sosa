@@ -14,7 +14,7 @@ const translations = {
   "Lewati ke konten":"Skip to content","Menu utama":"Main navigation","Unggulan":"Featured",
   "Katalog":"Catalog","Layanan":"Services","Testimoni":"Testimonials","Kontak":"Contact",
   "Full stack developer":"Full-stack developer","Website dan aplikasi":"Websites and applications",
-  "siap pakai":"ready to use","Lihat proyek yang sudah jadi, coba preview-nya, lalu pesan lewat WhatsApp.":"Explore completed projects, preview them, and order via WhatsApp.",
+  "siap pakai":"ready to use","tinggal jalan.":"ready to launch.","Semua hak dilindungi.":"All rights reserved.","Lihat proyek yang sudah jadi, coba preview-nya, lalu pesan lewat WhatsApp.":"Explore completed projects, preview them, and order via WhatsApp.",
   "Lihat Katalog":"View Catalog","Tanya via WhatsApp":"Ask via WhatsApp","Pilihan utama":"Featured picks",
   "Proyek unggulan":"Featured Projects","Proyek unggulan akan segera tampil.":"Featured projects coming soon.",
   "Semua proyek":"All projects","Pilih kategori, klik proyek untuk melihat foto, video, dan detailnya.":"Choose a category, then select a project to view photos, videos, and details.",
