@@ -1,0 +1,156 @@
+/* ==========================================================================
+   Susa.Sosa - Components (tombol, kartu, dialog, chip)
+   Semua klik punya umpan balik: hover, tekan (scale), dan fokus.
+   ========================================================================== */
+
+/* ---------- Logo (mengikuti warna teks, aman di mode gelap) ---------- */
+.logo-mark {
+  display: block;
+  aspect-ratio: 500 / 620;
+  background: currentColor;
+  -webkit-mask: url("../assets/logo.svg") center / contain no-repeat;
+  mask: url("../assets/logo.svg") center / contain no-repeat;
+}
+
+/* ---------- Tombol ---------- */
+.btn {
+  --btn-bg: var(--color-ink);
+  --btn-fg: var(--color-bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font: 600 var(--text-sm) var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.btn:active { transform: translateY(0) scale(0.96); box-shadow: none; }
+
+/* Riak (ripple) saat klik, posisi diatur oleh js/ui.js */
+.btn .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.25;
+  transform: scale(0);
+  pointer-events: none;
+  animation: ripple var(--dur-slow) var(--ease-out) forwards;
+}
+
+.btn--accent { --btn-bg: var(--color-accent); --btn-fg: var(--color-accent-ink); }
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-ink);
+  border-color: var(--color-line);
+}
+.btn--ghost:hover { background: var(--color-surface-2); }
+.btn--wa { --btn-bg: #1faa59; --btn-fg: #fff; }
+.btn[disabled] { opacity: 0.5; pointer-events: none; }
+
+.btn-icon {
+  display: inline-grid;
+  place-items: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* ---------- Chip kategori ---------- */
+.chip {
+  min-height: 38px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-ink-soft);
+  font: 500 var(--text-sm) var(--font-body);
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-out);
+}
+.chip:hover { border-color: var(--color-ink); color: var(--color-ink); }
+.chip:active { transform: scale(0.95); }
+.chip[aria-pressed="true"] {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-bg);
+}
+
+/* ---------- Kartu proyek ---------- */
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.card:active { transform: translateY(-2px) scale(0.99); }
+.card__media { aspect-ratio: 16 / 10; overflow: hidden; background: var(--color-surface-2); }
+.card__media img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.card:hover .card__media img { transform: scale(1.06); }
+.card__body { padding: var(--space-4) var(--space-5) var(--space-5); }
+.card__title { margin: 0 0 var(--space-1); font-size: var(--text-lg); }
+.card__price { color: var(--color-ink); font-weight: 700; }
+
+/* ---------- Dialog preview ---------- */
+.dialog {
+  width: min(100% - 1.5rem, 960px);
+  max-height: min(92dvh, 900px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-lg);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.dialog::backdrop {
+  background: var(--color-overlay);
+  backdrop-filter: blur(6px);
+}
+.dialog:focus { outline: none; }
+.dialog[open] { animation: dialog-in var(--dur-base) var(--ease-spring); }
+.dialog[open]::backdrop { animation: fade-in var(--dur-base) var(--ease-out); }
+.dialog.is-closing { animation: dialog-out var(--dur-base) var(--ease-out) forwards; }
+.dialog.is-closing::backdrop { animation: fade-out var(--dur-base) var(--ease-out) forwards; }
+
+.dialog__bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-3);
+  pointer-events: none;
+}
+.dialog__bar .btn { pointer-events: auto; background: var(--color-surface); color: var(--color-ink); box-shadow: var(--shadow-md); }
+.dialog__content { padding: 0 var(--space-5) var(--space-6); }
+
+@media (min-width: 768px) {
+  .dialog__content { padding: 0 var(--space-7) var(--space-7); }
+}

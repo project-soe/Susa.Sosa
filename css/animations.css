@@ -1,0 +1,61 @@
+/* ==========================================================================
+   Susa.Sosa - Animations
+   ========================================================================== */
+
+@keyframes ripple { to { transform: scale(4); opacity: 0; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes dialog-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(16px) scale(0.97); }
+}
+
+/* Muncul saat digulir (diatur js/ui.js lewat IntersectionObserver) */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* Intro logo: garis tergambar, lalu terisi */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-intro);
+  display: grid;
+  place-items: center;
+  background: var(--color-bg);
+  transition: opacity var(--dur-slow) var(--ease-out), visibility var(--dur-slow);
+}
+.intro.is-done { opacity: 0; visibility: hidden; }
+.intro__logo { width: clamp(90px, 22vw, 150px); margin-inline: auto; color: var(--color-ink); animation: intro-pop 1.4s var(--ease-spring) both; }
+.intro__name {
+  margin-top: var(--space-4);
+  text-align: center;
+  font: 600 var(--text-lg) var(--font-display);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  animation: fade-in 0.8s 0.6s var(--ease-out) both;
+}
+@keyframes intro-pop {
+  from { opacity: 0; transform: scale(0.7) rotate(-6deg); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Transisi halaman (View Transitions API) */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: fade-out var(--dur-base) var(--ease-out); }
+::view-transition-new(root) { animation: fade-in var(--dur-base) var(--ease-out); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}

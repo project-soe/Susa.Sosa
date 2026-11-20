@@ -1,0 +1,60 @@
+{
+  "categories": [
+    { "id": "c1", "name": "Website", "slug": "website", "sort": 1 },
+    { "id": "c2", "name": "Aplikasi", "slug": "aplikasi", "sort": 2 },
+    { "id": "c3", "name": "Toko Online", "slug": "toko-online", "sort": 3 }
+  ],
+  "projects": [
+    {
+      "id": "p1", "category_id": "c1", "title": "Company Profile Modern", "slug": "company-profile-modern",
+      "summary": "Website profil perusahaan yang cepat dan responsif.",
+      "description": "Halaman beranda, layanan, portofolio, dan kontak dengan animasi halus. Cocok untuk UMKM dan jasa profesional. Sudah termasuk SEO dasar dan integrasi WhatsApp.",
+      "price": 750000, "demo_url": "", "featured": true, "featured_order": 1, "published": true, "media": []
+    },
+    {
+      "id": "p2", "category_id": "c3", "title": "Katalog Produk dengan Pesan WhatsApp", "slug": "katalog-produk-wa",
+      "summary": "Katalog online tanpa ribet, pesanan masuk lewat WhatsApp.",
+      "description": "Daftar produk dengan kategori, pencarian, dan tombol pesan otomatis ke WhatsApp. Admin bisa menambah produk kapan saja.",
+      "price": 1200000, "demo_url": "", "featured": true, "featured_order": 2, "published": true, "media": []
+    },
+    {
+      "id": "p3", "category_id": "c2", "title": "Aplikasi Kasir Sederhana", "slug": "aplikasi-kasir",
+      "summary": "Catat penjualan harian dan lihat laporan singkat.",
+      "description": "Aplikasi web untuk mencatat transaksi, stok, dan laporan harian. Bisa dipasang di HP seperti aplikasi biasa (PWA).",
+      "price": 2500000, "demo_url": "", "featured": true, "featured_order": 3, "published": true, "media": []
+    },
+    {
+      "id": "p4", "category_id": "c1", "title": "Undangan Digital Interaktif", "slug": "undangan-digital",
+      "summary": "Undangan pernikahan online dengan RSVP dan musik.",
+      "description": "Undangan dengan galeri foto, peta lokasi, hitung mundur, buku tamu, dan konfirmasi kehadiran.",
+      "price": 500000, "demo_url": "", "featured": false, "featured_order": 0, "published": true, "media": []
+    },
+    {
+      "id": "p5", "category_id": "c2", "title": "Aplikasi Booking Jadwal", "slug": "aplikasi-booking",
+      "summary": "Pelanggan memilih jam, kamu menerima pesanan otomatis.",
+      "description": "Cocok untuk salon, bengkel, studio, dan jasa lainnya. Pengingat lewat WhatsApp dan kalender admin.",
+      "price": 2000000, "demo_url": "", "featured": false, "featured_order": 0, "published": true, "media": []
+    }
+  ],
+  "testimonials": [
+    { "id": "t1", "author": "Rina", "role": "Pemilik toko kue", "quote": "Hasilnya rapi dan cepat. Pesanan sekarang masuk lewat WhatsApp tanpa repot.", "photo_url": null },
+    { "id": "t2", "author": "Budi", "role": "Konsultan", "quote": "Prosesnya jelas, revisi dilayani, dan websitenya ringan dibuka di HP.", "photo_url": null }
+  ],
+  "settings": {
+    "brand": "Susa.Sosa",
+    "tagline": "Lihat proyek yang sudah jadi, coba preview-nya, lalu pesan lewat WhatsApp.",
+    "whatsapp": "6285158884404",
+    "socials": { "instagram": "", "tiktok": "", "youtube": "", "github": "" },
+    "services": [
+      { "name": "Website Company Profile", "price": 750000, "desc": "Desain responsif, cepat, siap online." },
+      { "name": "Website + Dashboard Admin", "price": 1500000, "desc": "Kelola konten sendiri tanpa coding." },
+      { "name": "Aplikasi Custom", "price": 2500000, "desc": "Dibuat sesuai kebutuhan bisnismu." }
+    ],
+    "payment_manual_enabled": true,
+    "payment_gateway_enabled": false
+  },
+  "payments": [
+    { "id": "m1", "kind": "bank", "name": "BCA", "account_number": "0000000000", "account_name": "Nama Pemilik", "qr_url": null },
+    { "id": "m2", "kind": "ewallet", "name": "DANA", "account_number": "085158884404", "account_name": "Nama Pemilik", "qr_url": null }
+  ]
+}

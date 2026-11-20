@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin - Susa.Sosa</title>
+  <meta name="theme-color" content="#0b0b0c">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin">
+
+  <!-- Masuk -->
+  <main class="login" id="login">
+    <div class="login__card">
+      <span class="logo-mark login__logo" role="img" aria-label="Susa.Sosa"></span>
+      <h1>Admin</h1>
+      <form id="loginForm">
+        <label class="lbl"><span>Email</span><input class="field" id="email" type="email" autocomplete="username" required></label>
+        <label class="lbl"><span>Kata sandi</span><input class="field" id="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn btn--accent btn--block" type="submit">Masuk</button>
+      </form>
+      <p class="hint" id="setupNote" hidden>Isi <code>supabaseUrl</code> dan <code>supabaseAnonKey</code> di <code>js/config.js</code> terlebih dahulu (lihat README).</p>
+      <a class="login__back" href="../index.html">&larr; Kembali ke website</a>
+    </div>
+  </main>
+
+  <!-- Dashboard -->
+  <div id="app" hidden>
+    <header class="admin__bar">
+      <div class="container admin__bar-in">
+        <div class="brand"><span class="logo-mark brand__logo" aria-hidden="true"></span><span class="brand__name">Admin</span></div>
+        <div class="row">
+          <a class="btn btn--ghost btn--sm" href="../index.html" target="_blank" rel="noopener">Lihat website</a>
+          <button class="btn btn--ghost btn--sm" id="logout">Keluar</button>
+        </div>
+      </div>
+      <div class="container"><nav class="tabs" id="tabs" role="tablist" aria-label="Bagian dashboard"></nav></div>
+    </header>
+    <main class="container admin__main"><div id="view" class="view-enter"></div></main>
+  </div>
+
+  <!-- Dialog form -->
+  <dialog class="dialog" id="formDialog" aria-label="Form">
+    <div class="dialog__bar">
+      <button class="btn btn-icon" data-close aria-label="Kembali">&larr;</button>
+      <button class="btn btn-icon" data-close aria-label="Tutup">&times;</button>
+    </div>
+    <div class="dialog__content" id="formBody"></div>
+  </dialog>
+
+  <!-- Dialog konfirmasi -->
+  <dialog class="dialog dialog--small" id="askDialog" aria-label="Konfirmasi">
+    <div class="dialog__content ask">
+      <h2>Yakin?</h2>
+      <p id="askText"></p>
+      <div class="row">
+        <button class="btn btn--danger" id="askYes">Hapus</button>
+        <button class="btn btn--ghost" data-close>Batal</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <script type="module" src="../js/admin/main.js"></script>
+</body>
+</html>
