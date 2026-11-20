@@ -53,25 +53,19 @@ const originalText = new WeakMap();
 const originalAttrs = new WeakMap();
 function translated(value) {
   const source = String(value ?? "");
-  const leading = source.match(/^\\s*/)?.[0] ?? "";
-  const trailing = source.match(/\\s*$/)?.[0] ?? "";
+  const leading = source.match(/^\s*/)?.[0] ?? "";
+  const trailing = source.match(/\s*$/)?.[0] ?? "";
   const core = source.slice(leading.length, source.length - trailing.length || undefined);
   if (!core) return source;
   if (Object.prototype.hasOwnProperty.call(translations, core)) return leading + translations[core] + trailing;
 
+  // Tangani frasa yang terpecah oleh elemen inline atau berdampingan di footer.
   let result = core;
   const phrases = Object.entries(translations)
-    .filter(([id]) => /\\s/.test(id.trim()) && id.trim().length > 5)
+    .filter(([id]) => /\s/.test(id.trim()) && id.trim().length > 5)
     .sort((a, b) => b[0].length - a[0].length);
   for (const [id, en] of phrases) {
-    const phrase = id.trim().replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\function translated(value) {
-  let result = value;
-  for (const [id,en] of Object.entries(translations)) {
-    if (result === id) return en;
-  }
-  return result;
-}");
-    result = result.replace(new RegExp(phrase, "gi"), en);
+    result = result.split(id.trim()).join(en);
   }
   return leading + result + trailing;
 }
@@ -367,8 +361,8 @@ async function confirmOrder(button) {
   try {
     const { code } = await createManualOrder(currentProject, name);
     const text = state.lang === "en"
-      ? `Hello Susa.Sosa, I have completed the transfer.\\nOrder code: ${code}\\nProject: ${localized(currentProject, "title")}\\nTotal: ${rupiah(currentProject.price)}${name ? `\\nName: ${name}` : ""}`
-      : `Halo Susa.Sosa, saya sudah transfer.\\nKode pesanan: ${code}\\nProyek: ${currentProject.title}\\nTotal: ${rupiah(currentProject.price)}${name ? `\\nNama: ${name}` : ""}`;
+      ? \`Hello Susa.Sosa, I have completed the transfer.\nOrder code: \${code}\nProject: \${localized(currentProject, "title")}\nTotal: \${rupiah(currentProject.price)}\${name ? \`\nName: \${name}\` : ""}\`
+      : \`Halo Susa.Sosa, saya sudah transfer.\nKode pesanan: \${code}\nProyek: \${currentProject.title}\nTotal: \${rupiah(currentProject.price)}\${name ? \`\nNama: \${name}\` : ""}\`;
     const url = waLink(text);
     if (popup) popup.location.href = url; else location.href = url;
   } catch {
