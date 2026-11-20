@@ -93,11 +93,14 @@ function openEditor(project) {
     title: project ? "Edit proyek" : "Proyek baru",
     submitLabel: project ? "Simpan perubahan" : "Simpan dan lanjut ke foto",
     body: `
-      ${field({ label: "Judul proyek", name: "title", value: p.title, required: true })}
+      ${field({ label: "Judul proyek (Indonesia)", name: "title", value: p.title, required: true })}
+      ${field({ label: "Project title (English)", name: "title_en", value: p.title_en ?? "" })}
       ${field({ label: "Kategori", name: "category_id", type: "select", value: p.category_id ?? "",
         options: [{ value: "", label: "Tanpa kategori" }, ...categories.map((c) => ({ value: c.id, label: c.name }))] })}
-      ${field({ label: "Ringkasan (tampil di kartu)", name: "summary", value: p.summary, placeholder: "Satu kalimat singkat" })}
-      ${field({ label: "Deskripsi lengkap", name: "description", type: "textarea", rows: 6, value: p.description })}
+      ${field({ label: "Ringkasan (Indonesia)", name: "summary", value: p.summary, placeholder: "Satu kalimat singkat" })}
+      ${field({ label: "Summary (English)", name: "summary_en", value: p.summary_en ?? "", placeholder: "A short sentence" })}
+      ${field({ label: "Deskripsi lengkap (Indonesia)", name: "description", type: "textarea", rows: 5, value: p.description })}
+      ${field({ label: "Full description (English)", name: "description_en", type: "textarea", rows: 5, value: p.description_en ?? "" })}
       ${field({ label: "Harga (Rp)", name: "price", type: "number", value: p.price, required: true, attrs: 'min="0" step="1000" inputmode="numeric"' })}
       ${field({ label: "Link demo (opsional)", name: "demo_url", type: "url", value: p.demo_url ?? "", placeholder: "https://..." })}
       <div class="checks">
@@ -110,7 +113,9 @@ function openEditor(project) {
         title: data.get("title").trim(),
         category_id: data.get("category_id") || null,
         summary: data.get("summary").trim(),
+        summary_en: data.get("summary_en").trim(),
         description: data.get("description").trim(),
+        description_en: data.get("description_en").trim(),
         price: Number(data.get("price")) || 0,
         demo_url: data.get("demo_url").trim() || null,
         published: data.has("published"),
@@ -169,7 +174,7 @@ function mediaItemHTML(m, i, all) {
   return `
     <div class="media__item" data-mid="${esc(m.id)}">
       <div class="media__thumb">${thumb}</div>
-      ${m.kind === "image" ? `<label class="media__label">Label foto<input class="field" type="text" data-media-label maxlength="80" value="${esc(m.label ?? "")}" placeholder="Contoh: Halaman Utama"></label>` : ""}
+      ${m.kind === "image" ? `<label class="media__label">Label foto (Indonesia)<input class="field" type="text" data-media-label maxlength="80" value="${esc(m.label ?? "")}" placeholder="Contoh: Halaman Utama"></label><label class="media__label">Photo label (English)<input class="field" type="text" data-media-label-en maxlength="80" value="${esc(m.label_en ?? "")}" placeholder="Example: Homepage"></label>` : ""}
       <div class="media__tools">
         <button type="button" class="btn btn--ghost btn-icon btn--xs" data-m="up" aria-label="Naikkan" ${i === 0 ? "disabled" : ""}>&uarr;</button>
         <button type="button" class="btn btn--ghost btn-icon btn--xs" data-m="down" aria-label="Turunkan" ${i === (all?.length ?? 1) - 1 ? "disabled" : ""}>&darr;</button>
@@ -214,18 +219,19 @@ function wireMedia(form) {
   });
 
   $("#mediaGrid").addEventListener("change", async (event) => {
-    const input = event.target.closest("[data-media-label]");
+    const input = event.target.closest("[data-media-label], [data-media-label-en]");
     if (!input) return;
     const item = input.closest("[data-mid]");
     const media = editing.media.find((m) => m.id === item?.dataset.mid);
     if (!media) return;
+    const field = input.hasAttribute("data-media-label-en") ? "label_en" : "label";
     const label = input.value.trim();
     try {
-      await update("media", media.id, { label });
-      media.label = label;
+      await update("media", media.id, { [field]: label });
+      media[field] = label;
       toast("Label foto tersimpan");
     } catch (error) {
-      input.value = media.label ?? "";
+      input.value = media[field] ?? "";
       toast(error.message, "error");
     }
   });
