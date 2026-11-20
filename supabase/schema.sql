@@ -10,6 +10,7 @@
 create table if not exists categories (
   id uuid primary key default gen_random_uuid(),
   name text not null,
+  name_en text not null default '',
   slug text not null unique,
   sort int not null default 0
 );
@@ -18,9 +19,12 @@ create table if not exists projects (
   id uuid primary key default gen_random_uuid(),
   category_id uuid references categories(id) on delete set null,
   title text not null,
+  title_en text not null default '',
   slug text not null unique,
   summary text not null default '',
+  summary_en text not null default '',
   description text not null default '',
+  description_en text not null default '',
   price bigint not null default 0 check (price >= 0),
   demo_url text,
   featured boolean not null default false,
@@ -35,21 +39,32 @@ create table if not exists media (
   kind text not null check (kind in ('image', 'video')),
   url text not null,
   sort int not null default 0,
-  label text not null default ''
+  label text not null default '',
+  label_en text not null default ''
 );
 
 -- Tambahkan kolom label juga pada database yang sudah pernah dibuat.
 alter table media add column if not exists label text not null default '';
+alter table media add column if not exists label_en text not null default '';
 
 create table if not exists testimonials (
   id uuid primary key default gen_random_uuid(),
   author text not null,
   role text not null default '',
+  role_en text not null default '',
   quote text not null,
+  quote_en text not null default '',
   photo_url text,
   published boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+alter table categories add column if not exists name_en text not null default '';
+alter table projects add column if not exists title_en text not null default '';
+alter table projects add column if not exists summary_en text not null default '';
+alter table projects add column if not exists description_en text not null default '';
+alter table testimonials add column if not exists role_en text not null default '';
+alter table testimonials add column if not exists quote_en text not null default '';
 
 create table if not exists settings (
   key text primary key,
@@ -206,6 +221,7 @@ create policy "admin media write" on storage.objects
 insert into settings (key, value) values
   ('brand', '"Susa.Sosa"'),
   ('tagline', '"Lihat proyek yang sudah jadi, coba preview-nya, lalu pesan lewat WhatsApp."'),
+  ('tagline_en', '"Explore completed projects, preview them, and order via WhatsApp."'),
   ('whatsapp', '"6285158884404"'),
   ('socials', '{"instagram":"","tiktok":"","youtube":"","github":""}'),
   ('services', '[{"name":"Website Company Profile","price":750000,"desc":"Desain responsif, cepat, siap online."},{"name":"Website + Dashboard Admin","price":1500000,"desc":"Kelola konten sendiri tanpa coding."},{"name":"Aplikasi Custom","price":2500000,"desc":"Dibuat sesuai kebutuhan bisnismu."}]'),
