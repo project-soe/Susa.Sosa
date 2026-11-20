@@ -115,7 +115,7 @@ function cardHTML(project, index) {
       <div class="card__media">${media}</div>
       <div class="card__body">
         <p class="card__cat">${esc(categoryName(project))}</p>
-        <h3 class="card__title">${esc(project.title)}</h3>
+        <h3 class="card__title">${esc(localized(project, "title"))}</h3>
         <p>${esc(localized(project, "summary"))}</p>
         <span class="card__price">${rupiah(project.price)}</span>
       </div>
@@ -157,7 +157,7 @@ function renderServices() {
         <p>${esc(localized(s, "desc"))}</p>
         <div class="plan__price"><small>mulai dari</small><br>${rupiah(s.price)}</div>
         <a class="btn btn--ghost" target="_blank" rel="noopener"
-           href="${esc(waLink(`Halo Susa.Sosa, saya tertarik dengan layanan: ${s.name}`))}">Tanya layanan ini</a>
+           href="${esc(waLink(`Hello Susa.Sosa, I am interested in this service: ${localized(s, "name")}`))}">Tanya layanan ini</a>
       </article>`
     )
     .join("");
@@ -287,7 +287,7 @@ function renderDialog(project) {
       ${project.media.length > 1 ? `<div class="gallery__thumbs" id="galleryThumbs">${project.media.map(thumbHTML).join("")}</div>` : ""}`
     : `<div class="gallery__main"><div class="card__ph"><span class="logo-mark"></span></div></div>`}
     <p class="card__cat">${esc(categoryName(project))}</p>
-    <h2 id="dlgTitle">${esc(project.title)}</h2>
+    <h2 id="dlgTitle">${esc(localized(project, "title"))}</h2>
     <p class="dlg__desc">${esc(localized(project, "description") || localized(project, "summary"))}</p>
     <div class="dlg__price">${rupiah(project.price)}</div>
     <div class="row">
