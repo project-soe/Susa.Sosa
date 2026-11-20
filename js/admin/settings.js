@@ -24,7 +24,8 @@ export async function render(root) {
       <fieldset>
         <legend>Kontak</legend>
         ${field({ label: "Nomor WhatsApp", name: "whatsapp", value: s.whatsapp ?? "", required: true, hint: "Boleh 0851... atau 62851..., otomatis dirapikan.", attrs: 'inputmode="tel"' })}
-        ${field({ label: "Kalimat pembuka di Beranda", name: "tagline", value: s.tagline ?? "" })}
+        ${field({ label: "Kalimat pembuka di Beranda (Indonesia)", name: "tagline", value: s.tagline ?? "" })}
+        ${field({ label: "Homepage tagline (English)", name: "tagline_en", value: s.tagline_en ?? "" })}
       </fieldset>
 
       <fieldset>
@@ -50,7 +51,7 @@ export async function render(root) {
 
   const list = $("#services", root);
   $("#addService", root).onclick = () => {
-    list.insertAdjacentHTML("beforeend", serviceHTML({ name: "", price: 0, desc: "" }));
+    list.insertAdjacentHTML("beforeend", serviceHTML({ name: "", name_en: "", price: 0, desc: "", desc_en: "" }));
     list.lastElementChild.querySelector("input").focus();
   };
   list.onclick = (event) => event.target.closest("[data-del]")?.closest(".service")?.remove();
@@ -71,8 +72,10 @@ export async function render(root) {
     const servicesOut = $$(".service", form)
       .map((el) => ({
         name: $("[data-s='name']", el).value.trim(),
+        name_en: $("[data-s='name-en']", el).value.trim(),
         price: Number($("[data-s='price']", el).value) || 0,
         desc: $("[data-s='desc']", el).value.trim(),
+        desc_en: $("[data-s='desc-en']", el).value.trim(),
       }))
       .filter((x) => x.name);
 
@@ -82,6 +85,7 @@ export async function render(root) {
       await saveSettings({
         whatsapp,
         tagline: String(data.get("tagline")).trim(),
+        tagline_en: String(data.get("tagline_en")).trim(),
         socials: socialsOut,
         services: servicesOut,
         payment_manual_enabled: data.has("payment_manual_enabled"),
@@ -98,8 +102,10 @@ export async function render(root) {
 
 const serviceHTML = (s) => `
   <div class="service">
-    <input class="field" data-s="name" value="${esc(s.name)}" placeholder="Nama layanan" aria-label="Nama layanan">
+    <input class="field" data-s="name" value="${esc(s.name)}" placeholder="Nama layanan (Indonesia)" aria-label="Nama layanan (Indonesia)">
+    <input class="field" data-s="name-en" value="${esc(s.name_en ?? "")}" placeholder="Service name (English)" aria-label="Service name (English)">
     <input class="field" data-s="price" type="number" min="0" step="1000" value="${esc(s.price)}" placeholder="Harga mulai dari" aria-label="Harga" inputmode="numeric">
-    <input class="field" data-s="desc" value="${esc(s.desc)}" placeholder="Deskripsi singkat" aria-label="Deskripsi layanan">
+    <input class="field" data-s="desc" value="${esc(s.desc)}" placeholder="Deskripsi singkat (Indonesia)" aria-label="Deskripsi layanan (Indonesia)">
+    <input class="field" data-s="desc-en" value="${esc(s.desc_en ?? "")}" placeholder="Short description (English)" aria-label="Short description (English)">
     <button type="button" class="btn btn--ghost btn-icon btn--xs" data-del aria-label="Hapus layanan">&times;</button>
   </div>`;
