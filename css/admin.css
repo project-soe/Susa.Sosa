@@ -172,3 +172,61 @@ input[type="file"].field { padding: var(--space-2) var(--space-3); }
 .toast.is-leaving { animation: toast-out var(--dur-base) var(--ease-out) forwards; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(16px) scale(0.95); } }
 @keyframes toast-out { to { opacity: 0; transform: translateY(8px) scale(0.97); } }
+
+
+/* ---------- Tata letak dashboard desktop ---------- */
+.admin__bar-in,
+.admin__bar > .container,
+.admin__main { width: min(100% - var(--gutter) * 2, 1320px); }
+.admin__bar-in { min-height: 72px; }
+.admin__bar > .container:last-child { padding-bottom: var(--space-2); }
+.tabs { gap: var(--space-2); align-items: center; }
+.tab { white-space: nowrap; }
+.admin__main { padding-block: clamp(2rem, 3vw, 3rem) var(--space-8); }
+.view-enter { min-width: 0; }
+.toolbar { align-items: center; margin-bottom: var(--space-6); }
+.toolbar > div { min-width: 0; }
+.toolbar .btn { flex: none; }
+.list { gap: var(--space-3); }
+.item { min-width: 0; }
+.item__main { min-width: 0; }
+.item__main strong,
+.item__main small { overflow-wrap: anywhere; }
+.item__controls,
+.item__actions { min-width: 0; }
+.item__actions { flex-wrap: wrap; justify-content: flex-end; }
+.item__controls { justify-content: flex-start; }
+.item__thumb { width: 76px; }
+.item:has(> .num) { grid-template-columns: minmax(0, 1fr) minmax(110px, 150px) auto; grid-template-areas: "main controls actions"; }
+.item:has(> .num) > .num { grid-area: controls; }
+.item:not(:has(.item__thumb)):not(:has(> .num)) { grid-template-columns: minmax(0, 1fr) minmax(170px, 220px); grid-template-areas: "main controls"; }
+.panel { width: 100%; max-width: none; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.panel > fieldset { min-width: 0; }
+.panel > fieldset:nth-child(3) { grid-column: 1 / -1; }
+.panel > .btn[type="submit"] { grid-column: 1 / -1; justify-self: start; min-width: 220px; }
+.service { min-width: 0; }
+.service .field { min-width: 0; }
+.inline-form { max-width: 680px; }
+.media__grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+@media (min-width: 1500px) {
+  .admin__bar-in,
+  .admin__bar > .container,
+  .admin__main { width: min(100% - 4rem, 1440px); }
+}
+@media (max-width: 900px) {
+  .admin__bar-in { min-height: 60px; }
+  .admin__main { padding-block: var(--space-5) var(--space-7); }
+  .panel { grid-template-columns: minmax(0, 1fr); }
+  .panel > fieldset:nth-child(3),
+  .panel > .btn[type="submit"] { grid-column: auto; }
+}
+@media (max-width: 600px) {
+  .admin__bar-in { align-items: center; }
+  .admin__bar-in > .row { gap: var(--space-2); }
+  .admin__bar-in .btn { padding-inline: var(--space-3); }
+  .toolbar { align-items: flex-start; }
+  .toolbar > .btn { width: 100%; }
+  .item__actions { justify-content: flex-start; }
+  .item:has(> .num) { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main main" "controls actions"; }
+  .item:not(:has(.item__thumb)):not(:has(> .num)) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main" "controls"; }
+}
