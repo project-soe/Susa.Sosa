@@ -404,7 +404,20 @@ function handleHash() {
 
 /* ---------- Interaksi halaman ---------- */
 
-function initLanguage() {\n  const toggle = $("#langToggle");\n  if (!toggle) return;\n  toggle.addEventListener("click", () => {\n    state.lang = state.lang === "id" ? "en" : "id";\n    localStorage.setItem("susa-language", state.lang);\n    applyLanguage();\n  });\n  applyLanguage();\n  const observer = new MutationObserver(() => applyLanguage());\n  observer.observe(document.body, { childList: true, subtree: true });\n}\n\nfunction initNav() {
+function initLanguage() {
+  const toggle = $("#langToggle");
+  if (!toggle) return;
+  toggle.addEventListener("click", () => {
+    state.lang = state.lang === "id" ? "en" : "id";
+    localStorage.setItem("susa-language", state.lang);
+    applyLanguage();
+  });
+  applyLanguage();
+  const observer = new MutationObserver(() => applyLanguage());
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+function initNav() {
   const toggle = $("#navToggle");
   const nav = $("#nav");
   const setOpen = (open) => {
@@ -454,6 +467,7 @@ function showError() {
 
 async function main() {
   $("#year").textContent = new Date().getFullYear();
+  initLanguage();
   initIntro();
   initRipple();
   initDialogs();
