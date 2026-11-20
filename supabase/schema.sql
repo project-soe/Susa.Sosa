@@ -34,8 +34,12 @@ create table if not exists media (
   project_id uuid not null references projects(id) on delete cascade,
   kind text not null check (kind in ('image', 'video')),
   url text not null,
-  sort int not null default 0
+  sort int not null default 0,
+  label text not null default '
 );
+
+-- Tambahkan kolom label juga pada database yang sudah pernah dibuat.
+alter table media add column if not exists label text not null default '';
 
 create table if not exists testimonials (
   id uuid primary key default gen_random_uuid(),
