@@ -1,42 +1,27 @@
 # Alur Pembayaran Susa.Sosa (Manual + Otomatis)
 
-Pengunjung memilih satu dari dua jalur di dialog preview proyek. Admin menentukan jalur mana yang aktif lewat dashboard.
+Website saat ini mendukung konfirmasi pembayaran manual. Integrasi payment gateway masih berupa rencana dan belum aktif.
 
-## Jalur A: Manual (Rp0, tanpa biaya transaksi)
+## Jalur A: Manual
 
-1. Pengunjung klik **Pesan** di dialog preview.
-2. Muncul daftar metode pembayaran (bank dan e-wallet) yang diatur admin: nama, nomor, atas nama, QR.
-3. Pengunjung transfer, lalu klik **Konfirmasi via WhatsApp**. Pesan otomatis berisi judul proyek, harga, dan kode pesanan.
-4. Admin cek mutasi, ubah status pesanan di dashboard menjadi **Lunas**, lalu kirim proyek lewat WA.
+1. Pengunjung membuka dialog preview proyek dan memilih **Pesan Sekarang**.
+2. Website menampilkan metode pembayaran bank/e-wallet aktif yang diatur admin.
+3. Pengunjung transfer, lalu klik **Konfirmasi via WhatsApp**.
+4. Website mencatat pesanan berstatus `menunggu` dan membuat pesan WhatsApp berisi judul proyek, harga, serta kode pesanan.
+5. Admin memeriksa pembayaran secara manual, lalu memperbarui status pesanan menjadi `dibayar` atau `dibatalkan`. Setelah pekerjaan diserahkan, status dapat diubah menjadi `selesai`.
 
-## Jalur B: Otomatis (payment gateway)
+## Jalur B: Otomatis (belum diimplementasikan)
 
-1. Pengunjung klik **Bayar Otomatis**, mengisi nama dan WhatsApp.
-2. Website membuat pesanan berstatus `menunggu` dan meminta halaman bayar ke gateway (QRIS, e-wallet, virtual account).
-3. Pengunjung membayar di halaman gateway.
-4. Gateway mengirim notifikasi (webhook) ke fungsi server gratis (Supabase Edge Function). Fungsi memverifikasi tanda tangan lalu mengubah status menjadi `lunas`.
-5. Pengunjung langsung melihat tombol **Terima Proyek / Hubungi Admin**, dan admin mendapat penanda pesanan baru.
+Rencana integrasi gateway membutuhkan server-side endpoint (misalnya Supabase Edge Function), penyimpanan secret hanya di server, verifikasi tanda tangan webhook, dan pembaruan status pesanan yang tervalidasi. Saklar gateway di dashboard belum mengaktifkan alur pembayaran otomatis.
 
-## Status pesanan (berlaku untuk kedua jalur)
+## Status pesanan
 
-`menunggu` -> `dibayar` -> `selesai` (atau `dibatalkan` / `kedaluwarsa`)
-
-## Tabel baru di database
-
-| Tabel | Isi utama |
-|---|---|
-| `orders` | id, kode, project_id, nama, wa, harga, metode (`manual`/`gateway`), status, dibuat |
-| `payment_methods` | tipe (`bank`/`ewallet`), nama, nomor, atas_nama, qr_url, aktif |
-| `settings` | `payment_manual_enabled`, `payment_gateway_enabled`, provider gateway |
-
-## Biaya (perlu diketahui)
-
-- Jalur A: Rp0.
-- Jalur B: gateway di Indonesia (mis. Midtrans, Xendit, Tripay) umumnya tanpa biaya bulanan, tetapi memotong persentase per transaksi (QRIS sekitar 0,7%, VA dan e-wallet lebih tinggi). Cek tarif terbaru saat mendaftar. Biaya hanya muncul saat ada penjualan.
-- Pendaftaran gateway butuh verifikasi identitas/usaha, jadi lakukan lebih awal. Selama belum aktif, website tetap jalan penuh dengan Jalur A.
+`menunggu` -> `dibayar` -> `selesai` (atau `dibatalkan` / `kedaluwarsa`).
 
 ## Keamanan
 
-- Kunci rahasia gateway hanya di fungsi server, tidak pernah di kode website.
-- Status `lunas` hanya boleh diubah oleh webhook terverifikasi atau admin.
-- Harga dihitung ulang di server dari tabel proyek, bukan dari kiriman browser.
+- Kunci publishable/anon boleh berada di frontend; service-role key dan secret gateway tidak boleh.
+- Harga pesanan dihitung ulang oleh trigger database dari proyek yang masih dipublikasikan.
+- Status awal pesanan dipaksa menjadi `menunggu` oleh trigger.
+- Akses admin dibatasi melalui `app_metadata.role = admin` pada JWT.
+- Bucket `media` bersifat public untuk mendukung URL gambar langsung; jangan simpan dokumen atau file rahasia di dalamnya.
