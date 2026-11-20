@@ -18,11 +18,26 @@ async function rest(path, options = {}) {
       ...options.headers,
     },
   });
+
+  // PostgREST dengan Prefer: return=minimal memang mengembalikan body kosong.
+  // Jangan memanggil res.json() pada respons kosong (akan memicu Unexpected end of JSON).
+  const raw = res.status === 204 || res.status === 205 ? "" : await res.text();
+
   if (!res.ok) {
-    const detail = await res.json().catch(() => ({}));
-    throw new Error(detail.message || detail.error_description || `Permintaan gagal (${res.status})`);
+    let detail = {};
+    if (raw) {
+      try { detail = JSON.parse(raw); }
+      catch { detail = { message: raw }; }
+    }
+    throw new Error(detail.message || detail.error_description || detail.details || `Permintaan gagal (${res.status})`);
   }
-  return res.status === 204 ? null : res.json();
+
+  if (!raw.trim()) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new Error("Server mengirim respons yang bukan JSON valid.");
+  }
 }
 
 function normalize(data) {
