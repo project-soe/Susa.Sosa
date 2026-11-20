@@ -28,7 +28,7 @@ const translations = {
   "Transfer ":"Transfer ","Nama kamu":"Your name","Nama kamu (opsional)":"Your name (optional)",
   "Konfirmasi via WhatsApp":"Confirm via WhatsApp","Setelah transfer, klik tombol di atas dan kirim bukti pembayaran lewat WhatsApp.":"After transferring, click the button above and send your payment receipt via WhatsApp.",
   "Pembayaran manual sedang tidak aktif. Silakan hubungi lewat WhatsApp.":"Manual payment is currently unavailable. Please contact us via WhatsApp.",
-  "Metode pembayaran belum diatur.":"Payment methods have not been configured.","a.n. ":"Account name: ",
+  "Metode pembayaran belum diatur.":"Payment methods have not been configured.","a.n. ":"Account name: ","a.n.":"Account name:",
   "mulai dari":"starting at","Tanya layanan ini":"Ask about this service","Proyek bisa dibuat sesuai kebutuhanmu.":"Projects can be tailored to your needs.",
   "Data belum bisa dimuat. Periksa koneksi lalu muat ulang halaman.":"Unable to load data. Check your connection and reload the page.",
   "Salin":"Copy","Tersalin":"Copied","Gagal, coba lagi":"Failed, try again",
