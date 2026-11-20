@@ -55,7 +55,11 @@ async function accessToken() {
 
 /* ---------- REST ---------- */
 
-const FRIENDLY = { 23505: "Data dengan nama atau alamat itu sudah ada", 23503: "Data masih dipakai bagian lain" };
+const FRIENDLY = {
+  23505: "Data dengan nama atau alamat itu sudah ada",
+  23503: "Data masih dipakai bagian lain",
+  42501: "Akses ditolak oleh keamanan database. Pastikan akun ini memiliki app_metadata.role = admin di Supabase, lalu logout dan login kembali. Lihat README bagian Pengaturan Admin.",
+};
 
 /**
  * Permintaan ke tabel Supabase.
