@@ -66,9 +66,14 @@ function applyLanguage() {
   });
   const toggle = $("#langToggle");
   if (toggle) {
-    toggle.innerHTML = lang === "id" ? '<strong>ID</strong> <span>|</span> EN' : 'ID <span>|</span> <strong>EN</strong>';
-    toggle.setAttribute("aria-label", lang === "id" ? "Switch language to English" : "Ganti bahasa ke Indonesia");
-    toggle.title = lang === "id" ? "Switch language to English" : "Ganti bahasa ke Indonesia";
+    const markup = lang === "id" ? '<strong>ID</strong> <span>|</span> EN' : 'ID <span>|</span> <strong>EN</strong>';
+    // Jangan membangun ulang tombol jika isinya sudah benar: ini mencegah
+    // MutationObserver memicu dirinya sendiri tanpa henti.
+    if (toggle.innerHTML !== markup) toggle.innerHTML = markup;
+    const ariaLabel = lang === "id" ? "Switch language to English" : "Ganti bahasa ke Indonesia";
+    if (toggle.getAttribute("aria-label") !== ariaLabel) toggle.setAttribute("aria-label", ariaLabel);
+    const title = ariaLabel;
+    if (toggle.title !== title) toggle.title = title;
   }
 }
 
@@ -413,7 +418,14 @@ function initLanguage() {
     applyLanguage();
   });
   applyLanguage();
-  const observer = new MutationObserver(() => applyLanguage());
+  const observer = new MutationObserver((records) => {
+    // Abaikan mutasi internal tombol bahasa agar observer tidak mengamati
+    // perubahan DOM yang dibuat oleh applyLanguage() sendiri.
+    const hasExternalChanges = records.some((record) =>
+      record.target !== toggle && !toggle.contains(record.target)
+    );
+    if (hasExternalChanges) applyLanguage();
+  });
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
