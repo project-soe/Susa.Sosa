@@ -119,9 +119,11 @@ const rupiah = (n) =>
 /** Hanya izinkan link http(s) agar tidak ada javascript: URL. */
 const safeUrl = (url) => (/^https?:\/\//i.test(url || "") ? url : "");
 
+// Nomor WhatsApp resmi tujuan pesanan Susa.Sosa (format internasional tanpa +).
+const BUSINESS_WHATSAPP = "6285158884404";
 const waLink = (text = "") => {
-  const number = String(state.data.settings.whatsapp || "").replace(/\D/g, "");
-  return `https://wa.me/${number}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
+  const query = text ? `?text=${encodeURIComponent(text)}` : "";
+  return `https://wa.me/${BUSINESS_WHATSAPP}${query}`;
 };
 
 const youtubeId = (url) => (String(url).match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/) || [])[1];
@@ -365,10 +367,14 @@ async function confirmOrder(button) {
       : "Halo Susa.Sosa, saya sudah transfer.\nKode pesanan: " + code + "\nProyek: " + currentProject.title + "\nTotal: " + rupiah(currentProject.price) + (name ? "\nNama: " + name : "");
     const url = waLink(text);
     if (popup) popup.location.href = url; else location.href = url;
-  } catch {
+  } catch (error) {
     popup?.close();
     button.disabled = false;
-    button.textContent = "Gagal, coba lagi";
+    button.textContent = state.lang === "en" ? "Try again" : "Gagal, coba lagi";
+    console.error("[Susa.Sosa] Gagal membuat pesanan:", error);
+    alert((state.lang === "en"
+      ? "Your order could not be saved. Please try again. Details: "
+      : "Pesanan belum berhasil disimpan. Silakan coba lagi. Detail: ") + (error?.message || "Kesalahan tidak diketahui"));
   }
   button.disabled = false;
 }
