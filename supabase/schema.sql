@@ -35,7 +35,7 @@ create table if not exists media (
   kind text not null check (kind in ('image', 'video')),
   url text not null,
   sort int not null default 0,
-  label text not null default '
+  label text not null default ''
 );
 
 -- Tambahkan kolom label juga pada database yang sudah pernah dibuat.
