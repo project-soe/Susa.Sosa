@@ -46,8 +46,10 @@ export async function render(root) {
       title: item ? "Edit testimoni" : "Testimoni baru",
       body: `
         ${field({ label: "Nama", name: "author", value: t.author, required: true })}
-        ${field({ label: "Pekerjaan atau usaha", name: "role", value: t.role })}
-        ${field({ label: "Isi testimoni", name: "quote", type: "textarea", value: t.quote, required: true })}
+        ${field({ label: "Pekerjaan atau usaha (Indonesia)", name: "role", value: t.role })}
+        ${field({ label: "Job title or business (English)", name: "role_en", value: t.role_en ?? "" })}
+        ${field({ label: "Isi testimoni (Indonesia)", name: "quote", type: "textarea", value: t.quote, required: true })}
+        ${field({ label: "Testimonial (English)", name: "quote_en", type: "textarea", value: t.quote_en ?? "" })}
         <label class="lbl"><span>Foto (opsional)</span>
           <input class="field" type="file" name="photo" accept="image/*"></label>
         ${t.photo_url ? `<label class="check"><input type="checkbox" name="remove_photo"><span>Hapus foto saat ini</span></label>` : ""}
@@ -56,7 +58,9 @@ export async function render(root) {
         const row = {
           author: data.get("author").trim(),
           role: data.get("role").trim(),
+          role_en: data.get("role_en").trim(),
           quote: data.get("quote").trim(),
+          quote_en: data.get("quote_en").trim(),
           published: data.has("published"),
         };
         const file = data.get("photo");
