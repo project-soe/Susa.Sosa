@@ -186,7 +186,7 @@ function renderServices() {
         <p>${esc(localized(s, "desc"))}</p>
         <div class="plan__price"><small>mulai dari</small><br>${rupiah(s.price)}</div>
         <a class="btn btn--ghost" target="_blank" rel="noopener"
-           href="${esc(waLink(`Hello Susa.Sosa, I am interested in this service: ${localized(s, "name")}`))}">Tanya layanan ini</a>
+           href="${esc(waLink(state.lang === "en" ? `Hello Susa.Sosa, I am interested in this service: ${localized(s, "name")}` : `Halo Susa.Sosa, saya tertarik dengan layanan: ${localized(s, "name")}`))}">Tanya layanan ini</a>
       </article>`
     )
     .join("");
