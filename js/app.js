@@ -8,7 +8,70 @@ import { loadData, createManualOrder } from "./api.js";
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-const state = { data: null, filter: "all" };
+const state = { data: null, filter: "all", lang: localStorage.getItem("susa-language") === "en" ? "en" : "id" };
+/* ---------- Bahasa Indonesia / English ---------- */
+const translations = {
+  "Lewati ke konten":"Skip to content","Menu utama":"Main navigation","Unggulan":"Featured",
+  "Katalog":"Catalog","Layanan":"Services","Testimoni":"Testimonials","Kontak":"Contact",
+  "Full stack developer":"Full-stack developer","Website dan aplikasi":"Websites and applications",
+  "siap pakai":"ready to use","Lihat proyek yang sudah jadi, coba preview-nya, lalu pesan lewat WhatsApp.":"Explore completed projects, preview them, and order via WhatsApp.",
+  "Lihat Katalog":"View Catalog","Tanya via WhatsApp":"Ask via WhatsApp","Pilihan utama":"Featured picks",
+  "Proyek unggulan":"Featured Projects","Proyek unggulan akan segera tampil.":"Featured projects coming soon.",
+  "Semua proyek":"All projects","Pilih kategori, klik proyek untuk melihat foto, video, dan detailnya.":"Choose a category, then select a project to view photos, videos, and details.",
+  "Semua":"All","Belum ada proyek di kategori ini.":"No projects in this category yet.",
+  "Harga jasa":"Service pricing","Butuh yang belum ada di katalog? Proyek bisa dibuat sesuai kebutuhanmu.":"Need something not listed? We can build a project tailored to your needs.",
+  "Kata mereka":"What people say","Ada proyek yang ingin dibuat?":"Have a project in mind?",
+  "Ceritakan kebutuhanmu lewat WhatsApp. Jawaban cepat, tanpa basa-basi.":"Tell us what you need on WhatsApp. Quick, straightforward responses.",
+  "Mulai sekarang":"Get started","Chat WhatsApp":"Chat on WhatsApp","Kembali ke atas ↑":"Back to top ↑",
+  "Semua hak dilindungi.":"All rights reserved.","Foto sebelumnya":"Previous photo","Foto berikutnya":"Next photo",
+  "Pesan Sekarang":"Order Now","Lihat Demo":"View Demo","Kembali":"Back","Tutup":"Close",
+  "Transfer ":"Transfer ","Nama kamu":"Your name","Nama kamu (opsional)":"Your name (optional)",
+  "Konfirmasi via WhatsApp":"Confirm via WhatsApp","Setelah transfer, klik tombol di atas dan kirim bukti pembayaran lewat WhatsApp.":"After transferring, click the button above and send your payment receipt via WhatsApp.",
+  "Pembayaran manual sedang tidak aktif. Silakan hubungi lewat WhatsApp.":"Manual payment is currently unavailable. Please contact us via WhatsApp.",
+  "Metode pembayaran belum diatur.":"Payment methods have not been configured.","a.n. ":"Account name: ",
+  "mulai dari":"starting at","Tanya layanan ini":"Ask about this service","Proyek bisa dibuat sesuai kebutuhanmu.":"Projects can be tailored to your needs.",
+  "Data belum bisa dimuat. Periksa koneksi lalu muat ulang halaman.":"Unable to load data. Check your connection and reload the page.",
+  "Salin":"Copy","Tersalin":"Copied","Gagal, coba lagi":"Failed, try again",
+  "Aktifkan JavaScript untuk melihat katalog.":"Enable JavaScript to view the catalog.",
+  "Susa.Sosa, ke atas":"Susa.Sosa, back to top","Buka menu":"Open menu","Tutup menu":"Close menu",
+  "Filter kategori":"Filter categories","Media ":"Media "
+};
+const originalText = new WeakMap();
+const originalAttrs = new WeakMap();
+function translated(value) {
+  let result = value;
+  for (const [id,en] of Object.entries(translations)) {
+    if (result === id) return en;
+  }
+  return result;
+}
+function applyLanguage() {
+  const lang = state.lang;
+  document.documentElement.lang = lang;
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+    const source = originalText.get(node);
+    node.nodeValue = lang === "en" ? translated(source) : source;
+  }
+  document.querySelectorAll("[aria-label], [title], [placeholder]").forEach((el) => {
+    for (const attr of ["aria-label", "title", "placeholder"]) {
+      if (!el.hasAttribute(attr)) continue;
+      let values = originalAttrs.get(el);
+      if (!values) { values = {}; originalAttrs.set(el, values); }
+      if (!(attr in values)) values[attr] = el.getAttribute(attr);
+      el.setAttribute(attr, lang === "en" ? translated(values[attr]) : values[attr]);
+    }
+  });
+  const toggle = $("#langToggle");
+  if (toggle) {
+    toggle.innerHTML = lang === "id" ? '<strong>ID</strong> <span>|</span> EN' : 'ID <span>|</span> <strong>EN</strong>';
+    toggle.setAttribute("aria-label", lang === "id" ? "Switch language to English" : "Ganti bahasa ke Indonesia");
+    toggle.title = lang === "id" ? "Switch language to English" : "Ganti bahasa ke Indonesia";
+  }
+}
+
 
 /* ---------- Helper ---------- */
 
@@ -341,7 +404,7 @@ function handleHash() {
 
 /* ---------- Interaksi halaman ---------- */
 
-function initNav() {
+function initLanguage() {\n  const toggle = $("#langToggle");\n  if (!toggle) return;\n  toggle.addEventListener("click", () => {\n    state.lang = state.lang === "id" ? "en" : "id";\n    localStorage.setItem("susa-language", state.lang);\n    applyLanguage();\n  });\n  applyLanguage();\n  const observer = new MutationObserver(() => applyLanguage());\n  observer.observe(document.body, { childList: true, subtree: true });\n}\n\nfunction initNav() {
   const toggle = $("#navToggle");
   const nav = $("#nav");
   const setOpen = (open) => {
