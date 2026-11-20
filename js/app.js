@@ -132,6 +132,8 @@ function renderContact() {
 
 const dialog = $("#projectDialog");
 let currentProject = null;
+let currentMediaIndex = 0;
+let galleryPointerStart = null;
 let pushedByUs = false; // true jika kita yang menambah riwayat browser saat dialog dibuka
 
 function mediaHTML(m) {
@@ -179,12 +181,34 @@ function paymentHTML(project) {
     <p class="note">Setelah transfer, klik tombol di atas dan kirim bukti pembayaran lewat WhatsApp.</p>`;
 }
 
+function showGalleryMedia(index) {
+  if (!currentProject?.media?.length) return;
+  const total = currentProject.media.length;
+  currentMediaIndex = (index + total) % total;
+  const main = $("#galleryMain");
+  if (!main) return;
+  main.querySelector("img, video, iframe")?.remove();
+  main.insertAdjacentHTML("afterbegin", mediaHTML(currentProject.media[currentMediaIndex]));
+  $(".thumb", dialog).forEach((thumb, i) => {
+    thumb.setAttribute("aria-current", String(i === currentMediaIndex));
+  });
+  const counter = $("#galleryCounter");
+  if (counter) counter.textContent = `${currentMediaIndex + 1} / ${total}`;
+  $("#galleryThumbs .thumb[aria-current=\"true\"]")?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+}
+
 function renderDialog(project) {
   const demo = safeUrl(project.demo_url);
   $("#dlgBody").innerHTML = `
     ${project.media.length ? `
-      <div class="gallery__main" id="galleryMain">${mediaHTML(project.media[0])}</div>
-      ${project.media.length > 1 ? `<div class="gallery__thumbs">${project.media.map(thumbHTML).join("")}</div>` : ""}`
+      <div class="gallery__main" id="galleryMain">
+        ${mediaHTML(project.media[0])}
+        ${project.media.length > 1 ? `
+          <button class="gallery__nav gallery__nav--prev" type="button" data-gallery-prev aria-label="Foto sebelumnya">&#8249;</button>
+          <button class="gallery__nav gallery__nav--next" type="button" data-gallery-next aria-label="Foto berikutnya">&#8250;</button>
+          <span class="gallery__counter" id="galleryCounter">1 / ${project.media.length}</span>` : ""}
+      </div>
+      ${project.media.length > 1 ? `<div class="gallery__thumbs" id="galleryThumbs">${project.media.map(thumbHTML).join("")}</div>` : ""}`
     : `<div class="gallery__main"><div class="card__ph"><span class="logo-mark"></span></div></div>`}
     <p class="card__cat">${esc(categoryName(project))}</p>
     <h2 id="dlgTitle">${esc(project.title)}</h2>
@@ -202,6 +226,7 @@ function openProject(slug, { push = true } = {}) {
   const project = state.data?.projects.find((p) => p.slug === slug);
   if (!project) return;
   currentProject = project;
+  currentMediaIndex = 0;
   renderDialog(project);
   dialog.scrollTop = 0;
   if (!dialog.open) openDialog(dialog);
@@ -236,11 +261,17 @@ dialog.addEventListener("click", async (event) => {
   const target = event.target;
   if (!(target instanceof Element)) return;
 
+  if (target.closest("[data-gallery-prev]")) {
+    showGalleryMedia(currentMediaIndex - 1);
+    return;
+  }
+  if (target.closest("[data-gallery-next]")) {
+    showGalleryMedia(currentMediaIndex + 1);
+    return;
+  }
   const thumb = target.closest(".thumb");
   if (thumb && currentProject) {
-    const i = Number(thumb.dataset.i);
-    $("#galleryMain").innerHTML = mediaHTML(currentProject.media[i]);
-    $$(".thumb", dialog).forEach((t) => t.setAttribute("aria-current", t === thumb));
+    showGalleryMedia(Number(thumb.dataset.i));
     return;
   }
   if (target.closest("[data-order]")) {
@@ -264,6 +295,20 @@ dialog.addEventListener("click", async (event) => {
 });
 
 /* Tombol kembali browser/HP menutup dialog; menutup dialog merapikan alamat. */
+const galleryBody = $("#dlgBody");
+galleryBody.addEventListener("pointerdown", (event) => {
+  if (!event.target.closest("#galleryMain") || event.target.closest("button")) return;
+  galleryPointerStart = { x: event.clientX, y: event.clientY };
+});
+galleryBody.addEventListener("pointerup", (event) => {
+  if (!galleryPointerStart || !event.target.closest("#galleryMain")) { galleryPointerStart = null; return; }
+  const dx = event.clientX - galleryPointerStart.x;
+  const dy = event.clientY - galleryPointerStart.y;
+  galleryPointerStart = null;
+  if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2) showGalleryMedia(currentMediaIndex + (dx < 0 ? 1 : -1));
+});
+galleryBody.addEventListener("pointercancel", () => { galleryPointerStart = null; });
+
 dialog.addEventListener("close", () => {
   currentProject = null;
   if (!location.hash.startsWith("#proyek/")) return;
