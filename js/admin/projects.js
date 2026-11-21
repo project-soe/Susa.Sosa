@@ -170,6 +170,20 @@ function mediaSectionHTML(project) {
     </fieldset>`;
 }
 
+function youtubeId(value) {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase().replace(/^www\./, "");
+    let id = "";
+    if (host === "youtu.be") id = url.pathname.split("/").filter(Boolean)[0] || "";
+    else if (["youtube.com", "m.youtube.com", "music.youtube.com", "youtube-nocookie.com"].includes(host)) {
+      id = url.searchParams.get("v") || "";
+      if (!id) id = url.pathname.match(/^\/(?:embed|shorts|live|v)\/([A-Za-z0-9_-]{11})(?:\b|$)/)?.[1] || "";
+    }
+    return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
+  } catch { return ""; }
+}
+
 function mediaItemHTML(m, i, all) {
   const thumb = m.kind === "image" ? `<img src="${esc(safeUrl(m.url))}" alt="">` : `<span>Video</span>`;
   return `
@@ -209,13 +223,17 @@ function wireMedia(form) {
   });
 
   $("#videoAdd").addEventListener("click", async () => {
-    const url = safeUrl($("#videoUrl").value.trim());
-    if (!url) return toast("Masukkan link video yang diawali https://", "error");
+    const input = $("#videoUrl");
+    const videoId = youtubeId(input.value.trim());
+    if (!videoId) {
+      return toast("Link YouTube tidak valid. Gunakan link video, Shorts, atau embed YouTube.", "error");
+    }
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
     try {
-      await addMedia("video", url);
-      $("#videoUrl").value = "";
+      await addMedia("video", embedUrl);
+      input.value = "";
       redrawMedia();
-      toast("Video ditambahkan");
+      toast("Video YouTube ditambahkan");
     } catch (error) { toast(error.message, "error"); }
   });
 
