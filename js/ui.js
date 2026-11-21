@@ -8,7 +8,7 @@
 export function initRipple() {
   document.addEventListener("pointerdown", (event) => {
     const btn = event.target.closest(".btn");
-    if (!btn) return;
+    if (!btn || btn.dataset.ripple === "false") return;
     const rect = btn.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
     const dot = document.createElement("span");
