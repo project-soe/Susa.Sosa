@@ -64,5 +64,5 @@ const rowHTML = (c) => `
     <div class="item__main"><input class="field" data-field="name" value="${esc(c.name)}" maxlength="40" aria-label="Nama kategori (Indonesia)"><input class="field" data-field="name_en" value="${esc(c.name_en ?? "")}" maxlength="40" aria-label="Category name (English)"></div>
     <label class="num" title="Urutan"><span class="sr-only">Urutan</span>
       <input type="number" min="0" data-field="sort" value="${c.sort}" aria-label="Urutan"></label>
-    <div class="item__actions"><button class="btn btn--ghost btn--sm btn--danger-text" data-act="del">Hapus</button></div>
+    <div class="item__actions"><button class="btn btn--ghost btn--sm btn--danger-text category-delete" type="button" data-act="del" data-ripple="false">Hapus</button></div>
   </li>`;
