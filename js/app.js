@@ -336,10 +336,10 @@ function renderDialog(project) {
       <section class="live-preview" aria-label="Live project preview">
         <div class="live-preview__head">
           <div>
-            <h3>Live Preview</h3>
-            <p>Website interaktif — coba navigasi, tombol, dan fiturnya langsung di sini.</p>
+            <h3>${state.lang === "en" ? "Live Preview" : "Pratinjau Langsung"}</h3>
+            <p>${state.lang === "en" ? "Interactive website — try its navigation, buttons, and features right here." : "Website interaktif — coba navigasi, tombol, dan fiturnya langsung di sini."}</p>
           </div>
-          <span class="live-preview__status"><i></i> Live</span>
+          <span class="live-preview__status"><i></i>${state.lang === "en" ? "Live" : "Aktif"}</span>
         </div>
         <div class="live-preview__viewport">
           <iframe
@@ -352,11 +352,11 @@ function renderDialog(project) {
             allowfullscreen
           ></iframe>
         </div>
-        <p class="live-preview__hint">Jika preview tidak tampil karena kebijakan keamanan website tujuan, gunakan tombol Lihat Demo untuk membukanya di tab baru.</p>
+        <p class="live-preview__hint">${state.lang === "en" ? "If the preview is blocked by the target website security policy, use the View Demo button to open it in a new tab." : "Jika preview tidak tampil karena kebijakan keamanan website tujuan, gunakan tombol Lihat Demo untuk membukanya di tab baru."}</p>
       </section>` : `
       <section class="live-preview live-preview--empty">
-        <h3>Live Preview belum tersedia</h3>
-        <p>Admin belum menambahkan URL demo aktif untuk proyek ini.</p>
+        <h3>${state.lang === "en" ? "Live preview is not available yet" : "Live Preview belum tersedia"}</h3>
+        <p>${state.lang === "en" ? "The admin has not added an active demo URL for this project." : "Admin belum menambahkan URL demo aktif untuk proyek ini."}</p>
       </section>`}
     <div class="dlg__price">${rupiah(project.price)}</div>
     <div class="row">
