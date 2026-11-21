@@ -102,7 +102,7 @@ function openEditor(project) {
       ${field({ label: "Deskripsi lengkap (Indonesia)", name: "description", type: "textarea", rows: 5, value: p.description })}
       ${field({ label: "Full description (English)", name: "description_en", type: "textarea", rows: 5, value: p.description_en ?? "" })}
       ${field({ label: "Harga (Rp)", name: "price", type: "number", value: p.price, required: true, attrs: 'min="0" step="1000" inputmode="numeric"' })}
-      ${field({ label: "Link demo (opsional)", name: "demo_url", type: "url", value: p.demo_url ?? "", placeholder: "https://..." })}
+      ${field({ label: "URL Live Preview / Link Demo (opsional)", name: "demo_url", type: "url", value: p.demo_url ?? "", placeholder: "https://domain-proyek.com" })}
       <div class="checks">
         ${field({ label: "Tampilkan di website", name: "published", type: "checkbox", value: p.published })}
         ${field({ label: "Tampilkan di Beranda (unggulan)", name: "featured", type: "checkbox", value: p.featured })}
