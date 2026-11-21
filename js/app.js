@@ -332,6 +332,32 @@ function renderDialog(project) {
     <p class="card__cat">${esc(categoryName(project))}</p>
     <h2 id="dlgTitle">${esc(localized(project, "title"))}</h2>
     <p class="dlg__desc">${esc(localized(project, "description") || localized(project, "summary"))}</p>
+    ${demo ? `
+      <section class="live-preview" aria-label="Live project preview">
+        <div class="live-preview__head">
+          <div>
+            <h3>Live Preview</h3>
+            <p>Website interaktif — coba navigasi, tombol, dan fiturnya langsung di sini.</p>
+          </div>
+          <span class="live-preview__status"><i></i> Live</span>
+        </div>
+        <div class="live-preview__viewport">
+          <iframe
+            src="${esc(demo)}"
+            title="Live preview: ${esc(localized(project, "title"))}"
+            loading="eager"
+            referrerpolicy="strict-origin-when-cross-origin"
+            sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads allow-top-navigation-by-user-activation"
+            allow="clipboard-read; clipboard-write; fullscreen"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <p class="live-preview__hint">Jika preview tidak tampil karena kebijakan keamanan website tujuan, gunakan tombol Lihat Demo untuk membukanya di tab baru.</p>
+      </section>` : `
+      <section class="live-preview live-preview--empty">
+        <h3>Live Preview belum tersedia</h3>
+        <p>Admin belum menambahkan URL demo aktif untuk proyek ini.</p>
+      </section>`}
     <div class="dlg__price">${rupiah(project.price)}</div>
     <div class="row">
       <button class="btn btn--accent" data-order>Pesan Sekarang</button>
