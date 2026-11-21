@@ -126,7 +126,19 @@ const waLink = (text = "") => {
   return `https://wa.me/${BUSINESS_WHATSAPP}${query}`;
 };
 
-const youtubeId = (url) => (String(url).match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/) || [])[1];
+function youtubeId(value) {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase().replace(/^www\./, "");
+    let id = "";
+    if (host === "youtu.be") id = url.pathname.split("/").filter(Boolean)[0] || "";
+    else if (["youtube.com", "m.youtube.com", "music.youtube.com", "youtube-nocookie.com"].includes(host)) {
+      id = url.searchParams.get("v") || "";
+      if (!id) id = url.pathname.match(/^\/(?:embed|shorts|live|v)\/([A-Za-z0-9_-]{11})(?:\b|$)/)?.[1] || "";
+    }
+    return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
+  } catch { return ""; }
+}
 
 const categoryName = (project) =>
   localized(state.data.categories.find((c) => c.id === project.category_id), "name");
@@ -253,7 +265,7 @@ function mediaHTML(m) {
   if (m.kind === "video") {
     const id = youtubeId(url);
     if (id) {
-      return `<iframe src="https://www.youtube-nocookie.com/embed/${id}" title="Video proyek" loading="lazy" allowfullscreen></iframe>`;
+      return `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1" title="Video proyek" loading="eager" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
     }
     return `<video src="${esc(url)}" controls playsinline preload="metadata"></video>`;
   }
